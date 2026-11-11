@@ -86,3 +86,35 @@ tu: w porownaniu z krokiem 4 w docker compose ps widoczny tylko frontend z cpu 0
 
 Blad.html zawieral duzo informacji dot bledow w kodzie wraz z fragemntami kodu i sciezkami (traceback),  przez co zwykly uzytkownik moze poznac szczegoly np komunikacji z bazą ktora moze zawierac dane wrazliwe i w ten sposob powstaje podatnosc
 
+# zad 3
+
+Przed poprawką:
+
+server {
+    listen 80;
+
+    # Pliki strony (index.html, style.css, script.js)
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+    }
+
+    # Wszystko pod /api/ nginx przekazuje do usługi backend w sieci Compose
+    location /api/ {
+        proxy_pass http://backend:5000/;
+    }
+}
+
+
+Po poprawce:
+
+HTTP/1.1 404 Not Found
+Server: nginx/1.31.6
+Date: Wed, 11 Nov 2026 10:32:44 GMT
+Content-Type: text/html
+Content-Length: 153
+Connection: keep-alive
+
+W obrazie produkcyjnym, jak widać w Dockerfile, kopiujemy do katalogu /html tylko pliki związane ze stroną (index style script),
+podobnie jak po poprawce w zadaniu. Kopiowanie całego katalogu projektu do katalogu serwerowanego jest ryzykowne, ponieważ udostępnia się użytkownikom do wglądu wszystkie pliki projektu, w tym te zawierajace poufne dane.
+
