@@ -67,3 +67,21 @@ PS C:\Users\lab04\jj_cyber\breach-checker>
 
 Ustawienia dodane do docker-compose.yml zapobiegaja uzyskaniu przez proces backendu uprawnień roota i potencjalnie doprowadzenia do zmian w plikach na hoście w przypadku
 błędu. 
+
+# 3
+
+docker history sekret-demo:plik
+IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT
+6d2712d8e59b   27 seconds ago   RUN /bin/sh -c rm /tmp/klucz.txt # buildkit     8.19kB    buildkit.dockerfile.v0
+<missing>      27 seconds ago   RUN /bin/sh -c test -s /tmp/klucz.txt && ech…   4.1kB     buildkit.dockerfile.v0
+<missing>      27 seconds ago   COPY klucz.txt /tmp/klucz.txt # buildkit        12.3kB    buildkit.dockerfile.v0
+<missing>      2 weeks ago      CMD ["/bin/sh"]                                 0B        buildkit.dockerfile.v0
+<missing>      2 weeks ago      ADD alpine-minirootfs-3.22.8-x86_64.tar.gz /…   8.97MB    buildkit.dockerfile.v0
+
+Get-ChildItem obraz/blobs/sha256 | Where-Object { tar -tf $_.FullName 2>$null | Select-String '^tmp/klucz.txt$' } | ForEach-Object { tar -xOf $_.FullName tmp/klucz.txt }
+tajny-klucz-julia
+
+Klucz można było odzyskać, ponieważ każda instrukcja RUN tworzy warstwę, która jest przechowywana przez obraz. Plik usunięty w kolejnej instrukcji dalej istnieje we wcześniejszej warstwie. RUN rm służy tylko jako etykieta, ale usunięty plik można odyskać.
+
+Jeśli zależy nam na przekazaniu poufnej informacji podczas budowania kontenera, można użyć docker build --secret i RUN --mount=type=secret, aby informacja nie trafiła ani do warstwy, ani do historii.
+
