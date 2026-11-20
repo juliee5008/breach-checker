@@ -12,7 +12,7 @@ permissions:
 env:
   POSTGRES_DB: breachdb
   POSTGRES_USER: breach
-  POSTGRES_PASSWORD: haslo-tylko-dla-ci
+  POSTGRES_PASSWORD: julia01
 
 jobs:
   test:
