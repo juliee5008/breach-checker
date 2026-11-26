@@ -8,6 +8,7 @@ RUN htmlhint index.html
 # --- Etap 2: obraz końcowy - sam nginx i pliki strony ---
 FROM nginx:alpine
 LABEL maintainer="julia.jaros@student.put.poznan.pl"
+LABEL org.opencontainers.image.source="https://github.com/juliee5008/breach-checker"
 COPY --from=lint /site/ /usr/share/nginx/html/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
